@@ -12,6 +12,7 @@ using NaughtyAttributes;
 public class PlayerController : MonoBehaviour
 {
 	private GameManager gameManager;
+	private SoundManager soundManager;
 
 	private Animator animator;
 	private Rigidbody2D rigidbody2D;
@@ -25,9 +26,10 @@ public class PlayerController : MonoBehaviour
 	private void Start()
 	{
 		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+		soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
 
 		animator = GetComponent<Animator>();
-		rigidbody2D = GetComponent<Rigidbody2D>();	
+		rigidbody2D = GetComponent<Rigidbody2D>();
 	}
 
 	private void Update()
@@ -46,19 +48,29 @@ public class PlayerController : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.name == "Ground Collider")
+		if (gameManager.isPlayerAlive)
 		{
-			animator.SetBool("Jump", false);
-			isPlayerLanded = true;
+			if (collision.gameObject.name == "Ground Collider")
+			{
+				soundManager.PlayLand();
+
+				animator.SetBool("Jump", false);
+				isPlayerLanded = true;
+			}
 		}
 	}
 
 	private void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.gameObject.name == "Ground Collider")
+		if (gameManager.isPlayerAlive)
 		{
-			animator.SetBool("Jump", true);
-			isPlayerLanded = false;
+			if (collision.gameObject.name == "Ground Collider")
+			{
+				soundManager.PlayJump();
+
+				animator.SetBool("Jump", true);
+				isPlayerLanded = false;
+			}
 		}
 	}
 }
